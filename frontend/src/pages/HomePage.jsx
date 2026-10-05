@@ -169,7 +169,7 @@ export default function ArtesaniasLaSorpresa({ onOpenLogin }) {
             </section>
           </div>
 
-          <img src={recursoOfertas} alt="" className="absolute -right-12.5 -top-10 w-125 max-lg:static max-lg:w-[80%] max-lg:mx-auto max-lg:mb-5" />
+          <img src={recursoOfertas} alt="" className="absolute -right-12.5 -top-12 w-125 max-lg:static max-lg:w-[80%] max-lg:mx-auto max-lg:mb-5 animate-blob" />
         </div>
       </main>
 
@@ -248,6 +248,7 @@ export default function ArtesaniasLaSorpresa({ onOpenLogin }) {
                       <ContactForm/>
                     </div>
                 </div>
+
 
           </div>
       </section>

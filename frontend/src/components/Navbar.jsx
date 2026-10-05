@@ -109,6 +109,7 @@ export default function Navbar({ externalOpenLogin }) {
           </section>
         </div>
       </div>
+      
     </>
   );
 }

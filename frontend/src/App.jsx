@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast'
 import Navbar from './components/Navbar.jsx'
 import Footer from './components/footer.jsx'
 import CatalogoPage from './pages/CatalogoPage.jsx'
+import InfoProductPage from './pages/InfoProductPage.jsx'
 
 function App() {
   
@@ -15,6 +16,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path='/CatalogoPage' element={<CatalogoPage/>}/>
+          <Route path='/productos/:id' element={<InfoProductPage/>}/>
         </Routes>   
         <Footer/>   
     </div>

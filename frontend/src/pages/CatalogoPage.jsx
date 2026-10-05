@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { FaHeart, FaLocationDot, FaHeartCircleXmark } from 'react-icons/fa6';
+import { useNavigate } from 'react-router-dom';
 
 export default function CatalogoPage({ onOpenUbi }) {
+  const navigate = useNavigate();
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [sortPrice, setSortPrice] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
 
   // Petición al backend al cargar el componente
   useEffect(() => {
@@ -29,12 +32,24 @@ export default function CatalogoPage({ onOpenUbi }) {
     fetchProductos();
   }, []);
 
-  // Filtrado y ordenamiento dinámico sobre los datos recibidos
-  const productosFiltrados = useMemo(() => {
-    let lista = productos.filter((p) =>
-      p.nombre.toLowerCase().startsWith(searchTerm.toLowerCase())
-    );
+  const categoriasDisponibles = useMemo(() => {
+    const todasLasCategorias = productos.flatMap((p) => p.tags || []);
+    return [...new Set(todasLasCategorias)];
+  }, [productos]);
 
+  // Filtrado combinado: Nombre + Categoría + Orden por Precio
+  const productosFiltrados = useMemo(() => {
+    let lista = productos.filter((p) => {
+      // Coincidencia con la búsqueda por nombre
+      const coincideNombre = p.nombre.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      // Coincidencia con la categoría elegida (si no hay ninguna seleccionada, pasan todos)
+      const coincideCategoria = selectedCategory === '' || (p.tags && p.tags.includes(selectedCategory));
+
+      return coincideNombre && coincideCategoria;
+    });
+
+    // Ordenamiento por precio
     if (sortPrice === 'asc') {
       lista.sort((a, b) => a.precio - b.precio);
     } else if (sortPrice === 'desc') {
@@ -42,11 +57,10 @@ export default function CatalogoPage({ onOpenUbi }) {
     }
 
     return lista;
-  }, [productos, searchTerm, sortPrice]);
+  }, [productos, searchTerm, selectedCategory, sortPrice]);
 
   const handleProductClick = (id) => {
-    localStorage.setItem('productoSeleccionado', id);
-    window.location.href = '/info-product';
+    navigate(`/productos/${id}`);
   };
 
   if (loading) {
@@ -84,6 +98,20 @@ export default function CatalogoPage({ onOpenUbi }) {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-[40%] max-lg:w-full p-4 bg-[#1e2122] border border-[#181515] rounded-md text-white outline-none focus:outline-[#E96324] focus:outline-2"
           />
+
+          {/* Filtro por Categorías */}
+          <select
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            value={selectedCategory}
+            className="p-4 px-8 bg-[#1e2122] text-white rounded-xl outline-none cursor-pointer max-lg:w-full border border-[#181515]"
+          >
+            <option value="">Categorías</option>
+            {categoriasDisponibles.map((cat, index) => (
+              <option key={index} value={cat}>
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </option>
+            ))}
+          </select>
 
           <select
             onChange={(e) => setSortPrice(e.target.value)}
