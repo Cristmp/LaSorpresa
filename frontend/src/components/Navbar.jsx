@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Logo from '../assets/LaSorpresaLogo.svg';
 import { FaBars } from 'react-icons/fa6';
 import LoginModal from './LoginModal';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import RegisterModal from './RegisterModal';
 
-export default function Navbar({ externalOpenLogin }) {
+export default function Navbar() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => Boolean(localStorage.getItem('token')));
+  const navigate = useNavigate();
 
   const openLogin = () => {
     setIsLoginOpen(true);
@@ -27,10 +29,21 @@ export default function Navbar({ externalOpenLogin }) {
     setIsRegisterOpen(false);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setIsLoggedIn(false);
+    navigate('/');
+  };
+
   return (
     <>
       {/* Modales */}
-      <LoginModal isOpen={isLoginOpen} onClose={closeModals} />
+      <LoginModal
+        isOpen={isLoginOpen}
+        onClose={closeModals}
+        onLoginSuccess={() => setIsLoggedIn(true)}
+      />
       <RegisterModal isOpen={isRegisterOpen} onClose={closeModals} />
 
       {/* Header / Navbar Desktop */}
@@ -42,30 +55,52 @@ export default function Navbar({ externalOpenLogin }) {
             <nav>
               <ul className="flex gap-8 list-none">
                 <li className="hover:-translate-y-1 transition-transform duration-200">
-                    <Link to={'/'}>
-                    Inicio
-                    </Link>
+                  <Link to="/">Inicio</Link>
                 </li>
                 <li className="hover:-translate-y-1 transition-transform duration-200 ">
-                    <Link to={'/CatalogoPage'}>
-                    Catálogo
-                    </Link>
+                  <Link to="/CatalogoPage">Catálogo</Link>
                 </li>
-                <li className="hover:-translate-y-1 transition-transform duration-200"><a href="./Pages/OfertasPage.html" className="text-white no-underline">Ofertas</a></li>
-                <li className="hover:-translate-y-1 transition-transform duration-200"><a href="./Pages/PersonalizaciónPage.html" className="text-white no-underline">Personalización</a></li>
-                <li className="hover:-translate-y-1 transition-transform duration-200"><a href="./Pages/BlogPage.html" className="text-white no-underline">Blog</a></li>
+                <li className="hover:-translate-y-1 transition-transform duration-200">
+                  <Link to="/ofertas">Ofertas</Link>
+                </li>
+                <li className="hover:-translate-y-1 transition-transform duration-200">
+                  <Link to="/personalizacion">Personalización</Link>
+                </li>
+                <li className="hover:-translate-y-1 transition-transform duration-200">
+                  <Link to="/blog">Blog</Link>
+                </li>
+                <li className="hover:-translate-y-1 transition-transform duration-200">
+                  <Link to="/cursos">Cursos</Link>
+                </li>
               </ul>
             </nav>
           </section>
 
-          <section className="flex gap-4 items-center">
-            <button onClick={openLogin} className="text-white text-base cursor-pointer hover:text-gray-300">
-              Iniciar sesión
+          <section className="btns-nav flex items-center gap-4">
+          {isLoggedIn ? (
+            <button
+              onClick={handleLogout}
+              className="bg-[#E96324] hover:bg-[#c84f1a] text-white font-semibold px-5 py-2 rounded-xl transition-colors font-poppins"
+            >
+              Cerrar sesión
             </button>
-            <button onClick={openRegister} className="bg-[#22282A] text-white border-2 border-white px-6 py-2 rounded-xl font-semibold cursor-pointer text-base hover:bg-white hover:text-[#22282A] transition-colors">
-              <p>Registrarse</p>
-            </button>
-          </section>
+          ) : (
+            <>
+              <button
+                onClick={openLogin}
+                className="text-white text-base font-poppins bg-transparent border-none cursor-pointer"
+              >
+                Iniciar sesión
+              </button>
+              <button
+                onClick={openRegister}
+                className="bg-[#22282A] text-white border-2 border-white px-6 py-2 rounded-xl font-poppins font-semibold text-base cursor-pointer hover:bg-white hover:text-black transition-colors"
+              >
+                Registrarse
+              </button>
+            </>
+          )}
+        </section>
         </div>
 
         <section className="hidden max-lg:block">
@@ -92,11 +127,24 @@ export default function Navbar({ externalOpenLogin }) {
           onClick={(e) => e.stopPropagation()}
         >
           <ul className="list-none w-full h-50 flex flex-col">
-            <a href="./index.html" className="text-white no-underline"><li className="p-3.5 px-2.5 cursor-pointer hover:bg-[#191D1E]">Inicio</li></a>
-            <a href="./Pages/CatalogoPage.jsx" className="text-white no-underline"><li className="p-3.5 px-2.5 border-t border-[#5f5e5e] cursor-pointer hover:bg-[#191D1E]">Catálogo</li></a>
-            <a href="./Pages/OfertasPage.html" className="text-white no-underline"><li className="p-3.5 px-2.5 border-t border-[#5f5e5e] cursor-pointer hover:bg-[#191D1E]">Ofertas</li></a>
-            <a href="./Pages/PersonalizaciónPage.html" className="text-white no-underline"><li className="p-3.5 px-2.5 border-t border-[#5f5e5e] cursor-pointer hover:bg-[#191D1E]">Personalización</li></a>
-            <a href="./Pages/BlogPage.html" className="text-white no-underline"><li className="p-3.5 px-2.5 border-t border-[#5f5e5e] cursor-pointer hover:bg-[#191D1E]">Blog</li></a>
+            <li className="p-3.5 px-2.5 cursor-pointer hover:bg-[#191D1E]">
+              <Link to="/" onClick={() => setIsMobileNavOpen(false)}>Inicio</Link>
+            </li>
+            <li className="p-3.5 px-2.5 border-t border-[#5f5e5e] cursor-pointer hover:bg-[#191D1E]">
+              <Link to="/CatalogoPage" onClick={() => setIsMobileNavOpen(false)}>Catálogo</Link>
+            </li>
+            <li className="p-3.5 px-2.5 border-t border-[#5f5e5e] cursor-pointer hover:bg-[#191D1E]">
+              <Link to="/ofertas" onClick={() => setIsMobileNavOpen(false)}>Ofertas</Link>
+            </li>
+            <li className="p-3.5 px-2.5 border-t border-[#5f5e5e] cursor-pointer hover:bg-[#191D1E]">
+              <Link to="/personalizacion" onClick={() => setIsMobileNavOpen(false)}>Personalización</Link>
+            </li>
+            <li className="p-3.5 px-2.5 border-t border-[#5f5e5e] cursor-pointer hover:bg-[#191D1E]">
+              <Link to="/blog" onClick={() => setIsMobileNavOpen(false)}>Blog</Link>
+            </li>
+            <li className="p-3.5 px-2.5 border-t border-[#5f5e5e] cursor-pointer hover:bg-[#191D1E]">
+              <Link to="/#cursos" onClick={() => setIsMobileNavOpen(false)}>Cursos</Link>
+            </li>
           </ul>
 
           <section className="flex gap-4 items-center flex-col mb-4">

@@ -1,26 +1,30 @@
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 
+dotenv.config()
+
 const verifyToken = (req, res, next) => {
     let token;
-    let authHeader = req.headers.Authorization || req.headers.authorization
-    if(authHeader && authHeader.startsWith("Bearer")){
-        token = authHeader?.split(" ")[1];
+    let authHeader = req.headers.Authorization || req.headers.authorization;
 
-        if(!token){
-            return res.status(401).json({message: "no token, authorization denied"})
-            
+    if (authHeader && authHeader.startsWith("Bearer")) {
+        token = authHeader.split(" ")[1];
+
+        if (!token) {
+            return res.status(401).json({ message: "No token, authorization denied" });
         }
 
         try {
             const decode = jwt.verify(token, process.env.JWT_SECRET);
             req.user = decode;
-            console.log("decoded user is: ", req.user)
+            console.log("Decoded user: ", req.user);
             next();
         } catch (error) {
-            res.status(400).json({message: "token is not valid"})
+            return res.status(401).json({ message: "Token is not valid" });
         }
+    } else {
+        return res.status(401).json({ message: "No token provided, authorization denied" });
     }
 }
 
-export default verifyToken
+export default verifyToken;

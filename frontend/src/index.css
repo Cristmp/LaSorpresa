@@ -49,6 +49,15 @@
     }
   }
 
+  @keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+  }
+
   @keyframes bounce {
     0%{
       transform: translateX(0px)
@@ -107,4 +116,22 @@
     font-weight: normal;
     font-style: normal;
     font-display: swap;
+}
+
+.animate-infinite-scroll {
+  display: flex;
+  width: max-content;
+  animation: marquee 20s linear infinite;
+}
+
+.animate-infinite-scroll:hover {
+  animation-play-state: paused;
+}
+
+.grid-background {
+  background-color: #22282A;
+  background-image:
+    linear-gradient(#5e5e58 1px, transparent 1px),
+    linear-gradient(to right, #5e5e58 1px, #22282A 1px);
+  background-size: 50px 50px;
 }

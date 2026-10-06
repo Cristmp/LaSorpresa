@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Logo from '../assets/LaSorpresaLogo.svg';
 import video from '../assets/Video-ArtesaniaLaSorpresa.mp4';
 import artesaniaHome from '../assets/ArtesaniaHome.svg';
@@ -13,15 +13,34 @@ import { MdEmail } from "react-icons/md";
 import {  
   FaBottleDroplet, 
   FaHandsHoldingCircle, 
-  FaEnvelope, 
-  FaCommentDots, 
   FaPhone, 
-  FaTag, 
-  FaAngleRight, 
 } from 'react-icons/fa6';
 import ContactForm from '../components/ContactForm';
 
 export default function ArtesaniasLaSorpresa({ onOpenLogin }) {
+
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCarrusel = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/carrusel');
+        if (!response.ok) throw new Error('Error al consultar la API');
+
+        const data = await response.json();
+        setItems(data);
+      } catch (error) {
+        console.error('Error obteniendo el carrusel:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCarrusel();
+  }, []);
+
+  const carouselItems = items.length > 0 ? [...items, ...items] : [];
 
   return (
     <div className="bg-[#22282A] text-white font-poppins min-h-screen selection:bg-[#E96324] selection:text-white">
@@ -101,21 +120,22 @@ export default function ArtesaniasLaSorpresa({ onOpenLogin }) {
               { img: "https://i.ibb.co/BVc47XhF/pyrp-vingeran-GKk7d-qvl2-A-unsplash.jpg", title: "Accesorios" },
               { img: "https://i.ibb.co/pryL9tRS/mu-ecas-de-tusa.jpg", title: "Más" }
             ].map((card, idx) => (
-              <a href="./Pages/CatalogoPage.html" key={idx} className="no-underline text-black w-full max-w-62.5 max-lg:max-w-65">
+              <Link key={idx} to="/CatalogoPage" className="no-underline text-black w-full max-w-62.5 max-lg:max-w-65">
                 <div className="bg-[#181717] rounded-xl shadow-[0px_6px_8px_rgba(0,0,0,0.25)] flex flex-col justify-center items-center p-5 gap-4 font-medium transition-all duration-200 hover:-translate-y-1 hover:bg-[#2e3336] text-white">
                   <div className="w-full h-37.5 overflow-hidden flex justify-center rounded-md">
                     <img src={card.img} alt={card.title} className="w-75 h-50 object-cover rounded-md" />
                   </div>
                   <p>{card.title}</p>
                 </div>
-              </a>
+
+              </Link>
             ))}
           </section>
         </div>
       </main>
 
       {/* SECCIÓN 4: MISIÓN / VISIÓN */}
-      <main className="h-screen max-lg:h-auto max-lg:py-16 max-lg:px-4 bg-[#22282A] flex justify-center items-center border-b-2 border-dashed border-[#646D61]">
+      <main className="h-screen max-lg:h-auto max-lg:py-16 max-lg:px-4 bg-[#22282A] flex justify-center items-center">
         <div className="w-[80%] max-lg:w-full h-full flex max-lg:flex-col justify-center items-center gap-40 max-lg:gap-16">
           <section className="relative w-full max-w-130.5 h-[65vh] max-lg:h-137.5 flex justify-center items-center">
             <div className="w-100 md:w-120 lg:w-130  -rotate-8 h-full bg-[#e4e4e4] rounded-xl shadow-[0px_6px_8px_rgba(0,0,0,0.25)] absolute"></div>
@@ -151,8 +171,76 @@ export default function ArtesaniasLaSorpresa({ onOpenLogin }) {
         </div>
       </main>
 
+      <main id="cursos" className="grid-background h-[80vh] mask-t-from-80% mask-b-from-80% max-lg:h-auto max-lg:py-16 max-lg:px-4 flex justify-center items-center gap-10 text-center bg-center " >
+        <div className="bg-[#131719] w-[25%] max-lg:w-full max-lg:max-w-125 h-auto max-lg:h-auto flex flex-col justify-center items-center rounded-2xl shadow-[0px_6px_8px_rgba(0,0,0,0.25)] p-8">
+                <div className="w-full flex flex-col text-start rounded-2xl">
+                  <img src="https://i.ibb.co/9HQ3MvB6/Portada-curso-Mesa-de-trabajo-1-02.png" alt="" className="object-cover rounded-xl" />
+                </div>
+
+                <div className="w-full flex flex-col text-start gap-2 rounded-2xl p-4">
+                  <h2 className="font-poppins font-bold text-2xl">Cursos de manualidades</h2>
+                  <p className="text-base">También contamos con cursos de manualidades en donde puedes aprender a hacer tus propios accesorios completamente desde cero</p>
+                </div>
+
+                <div className=" bg-[#E96324] w-full flex justify-center rounded-2xl items-center gap-2 mt-2 p-4">
+                  <p className="text-base font-bold">Ver más</p>
+                  <IoIosArrowForward size={20} />
+                </div>
+        </div>
+
+        <div className="w-full max-w-150 flex flex-col gap-4 rounded-2xl overflow-hidden">
+        <div className="w-full flex flex-col text-start gap-2 p-2">
+          <h2 className="font-dm-serif-text font-normal text-5xl text-white">
+            Aprende con nuestros cursos
+          </h2>
+          <p className="text-lg text-gray-300">
+            También contamos con cursos de manualidades en donde puedes aprender
+            a hacer tus propios accesorios completamente desde cero.
+          </p>
+          <p className="text-base font-bold text-white mt-2">Podrás crear:</p>
+        </div>
+
+        <div className="w-full overflow-hidden relative min-h-55">
+
+          <div className="absolute left-0 top-0 bottom-0 w-8 bg-linear-to-r from-[#22282A] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-linear-to-l from-[#22282A] to-transparent z-10 pointer-events-none" />
+
+          {loading ? (
+            <div className="flex justify-center items-center h-full text-gray-400">
+              Cargando...
+            </div>
+          ) : carouselItems.length > 0 ? (
+            <div className="animate-infinite-scroll flex gap-4">
+              {carouselItems.map((item, index) => (
+                <div
+                  key={`${item.id}-${index}`}
+                  className="bg-[#131719] w-60 shrink-0 flex flex-col rounded-2xl p-4 text-center border border-white/5 shadow-md"
+                >
+                  <div className="w-full h-40 rounded-xl overflow-hidden mb-3">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <h3 className="font-bold text-base text-white tracking-wider uppercase mb-1">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm text-gray-200 leading-snug">
+                    {item.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-gray-400 p-4">No hay elementos registrados.</div>
+          )}
+        </div>
+      </div>
+      </main>
+
       {/* SECCIÓN 5: OFERTAS */}
-      <main className="h-[60vh] max-lg:h-auto max-lg:py-16 max-lg:px-4 bg-linear-to-b from-[#22282A] via-[#22282A]/20 to-[#191D1E] flex justify-center items-center overflow-hidden relative">
+      <main className="h-[60vh] max-lg:h-auto max-lg:py-16 max-lg:px-4 bg-linear-to-b from-[#22282A] via-[#22282A]/20 to-[#191D1E] flex justify-center items-center overflow-hidden relative border-b-2 border-[#818181] border-dashed">
         <img src="/images/zigzag-N.svg" alt="" className="absolute w-50 h-50 bottom-0 left-0 -rotate-90" />
         <img src="/images/zigzag-V.svg" alt="" className="absolute w-50 h-50 top-0 right-0 -rotate-90" />
 
