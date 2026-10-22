@@ -10,6 +10,7 @@ import PersonalizacionPage from './pages/PersonalizacionPage.jsx'
 import OfertasPage from './pages/OfertasPage.jsx'
 import CursosPage from './pages/CursosPage.jsx'
 import BlogPage from './pages/BlogPage.jsx'
+import InfoCursoPage from './pages/InfoCursoPage.jsx'
 
 function App() {
   
@@ -25,6 +26,7 @@ function App() {
           <Route path='/ofertas' element={<OfertasPage/>}/>
           <Route path='/blog' element={<BlogPage/>}/>
           <Route path='/cursos' element={<CursosPage/>}/>
+          <Route path='/info' element={<InfoCursoPage/>}/>
         </Routes>   
         <Footer/>   
     </div>

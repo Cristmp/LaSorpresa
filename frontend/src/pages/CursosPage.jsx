@@ -7,6 +7,7 @@ import {
   FaChevronRight, 
   FaHouse 
 } from 'react-icons/fa6';
+import { Link } from 'react-router-dom';
 
 export default function CursosPage() {
   const [busqueda, setBusqueda] = useState('');
@@ -60,7 +61,7 @@ export default function CursosPage() {
   );
 
   return (
-    <div className="bg-[#181c1e] min-h-screen text-white pt-24 pb-16 font-poppins selection:bg-[#E96324] selection:text-white">
+    <div className="bg-[#181c1e] min-h-screen mt-12 text-white pt-24 pb-16 font-poppins selection:bg-[#E96324] selection:text-white">
       <main className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row gap-8">
         
         {/* SIDEBAR / PANEL LATERAL */}
@@ -165,10 +166,10 @@ export default function CursosPage() {
                   <div className="flex items-center gap-2">
                     {curso.estado === 'disponible' && (
                       <>
-                        <button className="flex-1 bg-[#E96324] hover:bg-[#c84f1a] text-white text-xs font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-1 transition-colors">
+                        <Link to={'/info'} className="flex-1 bg-[#E96324] hover:bg-[#c84f1a] text-white text-xs font-semibold py-3 px-4 rounded-xl flex items-center justify-center gap-1 transition-colors">
                           <span>Empezar</span>
                           <FaChevronRight size={10} />
-                        </button>
+                        </Link>
                         <button className="bg-[#2a3033] hover:bg-[#333a3e] text-white p-3 rounded-xl transition-colors">
                           <FaBell size={13} />
                         </button>

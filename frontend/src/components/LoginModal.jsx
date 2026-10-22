@@ -36,7 +36,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess }) {
       localStorage.setItem('user', JSON.stringify(data.user));
       setFormData({ correo: '', contraseña: '' });
       toast.success(data.message || 'Inicio de sesión exitoso');
-      onLoginSuccess?.();
+      onLoginSuccess?.(data.user);
       onClose();
     } catch (err) {
       setError(err.message || 'No se pudo conectar con el servidor.');
