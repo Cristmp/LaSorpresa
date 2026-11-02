@@ -16,6 +16,7 @@ import {
   FaPhone, 
 } from 'react-icons/fa6';
 import ContactForm from '../components/ContactForm';
+import { requestCoursesNavigation } from '../utils/coursesNavigation';
 
 export default function ArtesaniasLaSorpresa({ onOpenLogin }) {
 
@@ -182,10 +183,14 @@ export default function ArtesaniasLaSorpresa({ onOpenLogin }) {
                   <p className="text-base">También contamos con cursos de manualidades en donde puedes aprender a hacer tus propios accesorios completamente desde cero</p>
                 </div>
 
-                <div className=" bg-[#E96324] w-full flex justify-center rounded-2xl items-center gap-2 mt-2 p-4">
+                <button
+                  type="button"
+                  onClick={requestCoursesNavigation}
+                  className="bg-[#E96324] w-full flex justify-center rounded-2xl items-center gap-2 mt-2 p-4 text-white cursor-pointer"
+                >
                   <p className="text-base font-bold">Ver más</p>
                   <IoIosArrowForward size={20} />
-                </div>
+                </button>
         </div>
 
         <div className="w-full max-w-150 flex flex-col gap-4 rounded-2xl overflow-hidden">

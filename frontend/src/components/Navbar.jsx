@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Logo from '../assets/LaSorpresaLogo.svg';
 import { FaBars, FaUser, FaHeart, FaUserGear, FaRightFromBracket } from 'react-icons/fa6';
 import LoginModal from './LoginModal';
 import { Link, useNavigate } from 'react-router-dom';
 import RegisterModal from './RegisterModal';
 import toast from 'react-hot-toast';
+import { COURSES_NAVIGATION_REQUEST } from '../utils/coursesNavigation';
 
 const getStoredUserData = () => {
   if (!localStorage.getItem('token')) {
@@ -32,6 +33,7 @@ export default function Navbar() {
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [redirectToCoursesAfterLogin, setRedirectToCoursesAfterLogin] = useState(false);
   
   const [isLoggedIn, setIsLoggedIn] = useState(() => Boolean(localStorage.getItem('token')));
   const [userData, setUserData] = useState(getStoredUserData);
@@ -50,11 +52,11 @@ export default function Navbar() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const openLogin = () => {
+  const openLogin = useCallback(() => {
     setIsLoginOpen(true);
     setIsRegisterOpen(false);
     setIsMobileNavOpen(false);
-  };
+  }, []);
 
   const openRegister = () => {
     setIsRegisterOpen(true);
@@ -62,9 +64,30 @@ export default function Navbar() {
     setIsMobileNavOpen(false);
   };
 
+  const handleCoursesNavigation = useCallback(() => {
+    setIsMobileNavOpen(false);
+    if (localStorage.getItem('token')) {
+      navigate('/cursos');
+      return;
+    }
+
+    setRedirectToCoursesAfterLogin(true);
+    openLogin();
+  }, [navigate, openLogin]);
+
+  useEffect(() => {
+    window.addEventListener(COURSES_NAVIGATION_REQUEST, handleCoursesNavigation);
+    return () => window.removeEventListener(COURSES_NAVIGATION_REQUEST, handleCoursesNavigation);
+  }, [handleCoursesNavigation]);
+
   const closeModals = () => {
     setIsLoginOpen(false);
     setIsRegisterOpen(false);
+  };
+
+  const closeLoginModal = () => {
+    setIsLoginOpen(false);
+    setRedirectToCoursesAfterLogin(false);
   };
 
   const handleLogout = () => {
@@ -86,7 +109,12 @@ export default function Navbar() {
         email: userObj.correo || userObj.email || ''
       });
     }
+    const shouldRedirectToCourses = redirectToCoursesAfterLogin;
     closeModals();
+    if (shouldRedirectToCourses) {
+      setRedirectToCoursesAfterLogin(false);
+      navigate('/cursos');
+    }
   };
 
   return (
@@ -94,7 +122,7 @@ export default function Navbar() {
       {/* Modales */}
       <LoginModal
         isOpen={isLoginOpen}
-        onClose={closeModals}
+        onClose={closeLoginModal}
         onLoginSuccess={handleLoginSuccess}
       />
       <RegisterModal isOpen={isRegisterOpen} onClose={closeModals} />
@@ -125,7 +153,9 @@ export default function Navbar() {
                   <Link to="/blog">Blog</Link>
                 </li>
                 <li className="hover:-translate-y-1 transition-transform duration-200">
-                  <Link to="/cursos">Cursos</Link>
+                  <button type="button" onClick={handleCoursesNavigation} className="cursor-pointer">
+                    Cursos
+                  </button>
                 </li>
               </ul>
             </nav>
@@ -247,7 +277,9 @@ export default function Navbar() {
               <Link to="/blog" onClick={() => setIsMobileNavOpen(false)}>Blog</Link>
             </li>
             <li className="p-3.5 px-2.5 border-t border-[#5f5e5e] cursor-pointer hover:bg-[#191D1E]">
-              <Link to="/cursos" onClick={() => setIsMobileNavOpen(false)}>Cursos</Link>
+              <button type="button" onClick={handleCoursesNavigation} className="w-full text-left">
+                Cursos
+              </button>
             </li>
           </ul>
 

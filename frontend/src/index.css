@@ -135,3 +135,7 @@
     linear-gradient(to right, #5e5e58 1px, #22282A 1px);
   background-size: 50px 50px;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }

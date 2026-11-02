@@ -4,7 +4,6 @@ import { FaXmark } from 'react-icons/fa6';
 import toast from 'react-hot-toast';
 
 export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
-  // 1. Estados para los campos del formulario
   const [formData, setFormData] = useState({
     nombre: '',
     correo: '',
@@ -12,27 +11,23 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
     confirmarContraseña: ''
   });
 
-  // Estados para retroalimentación al usuario
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  // Manejador para actualizar los inputs
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
-    setError(''); // Limpia el error cuando el usuario empieza a escribir
+    setError('');
   };
 
-  // 2. Función de envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    // Validación básica en el frontend
     if (!formData.nombre || !formData.correo || !formData.contraseña) {
       setError('Por favor, completa todos los campos requeridos.');
       return;
@@ -46,8 +41,7 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
     setLoading(true);
 
     try {
-      // Petición POST a tu endpoint de registro
-      const response = await fetch('http://localhost:3000/api/registro', { // Cambia la URL según la ruta de tu API
+      const response = await fetch('http://localhost:3000/api/registro', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -65,12 +59,10 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
         throw new Error(data.mensaje || 'Ocurrió un error al registrar la cuenta');
       }
 
-      // Éxito: Limpiar formulario y cerrar/redirigir
-      toast.success("Usuario registrado con exito!")
+      toast.success("¡Usuario registrado con éxito!");
       setFormData({ nombre: '', correo: '', contraseña: '', confirmarContraseña: '' });
       onClose();
       
-      // Opcional: Redirigir al modal de inicio de sesión automáticamente
       if (onSwitchToLogin) onSwitchToLogin();
 
     } catch (err) {
@@ -82,90 +74,114 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
 
   return (
     <div 
-      className={`fixed inset-0 z-160 bg-black/40 flex items-center justify-center transition-all duration-300 ${
-        isOpen ? 'opacity-100 visible animate-fadeIn' : 'opacity-0 invisible pointer-events-none'
+      className={`fixed inset-0 z-160 bg-black/70 backdrop-blur-sm flex items-center justify-center transition-all duration-300 p-4 overflow-y-auto ${
+        isOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'
       }`}
       onClick={onClose}
     >
       <div 
-        className="bg-[#161B1F] max-w-135 max-lg:max-w-112.5 w-full h-auto p-5 px-12 rounded-xl text-white shadow-[5px_10px_30px_rgba(0,0,0,1)] relative flex flex-col my-8"
+        className="bg-[#161B1F] w-full max-w-4xl rounded-2xl text-white shadow-[5px_10px_30px_rgba(0,0,0,0.8)] relative overflow-hidden flex flex-col md:flex-row border border-[#2d3336] my-auto"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Botón Cerrar Global */}
         <button 
           onClick={onClose}
-          className="absolute text-[#5f5e5e] p-2.5 top-0 right-0 cursor-pointer m-4 hover:text-white transition-colors"
+          className="absolute text-gray-400 p-3 top-2 right-2 z-20 cursor-pointer hover:text-white transition-colors"
         >
-          <FaXmark size={24} />
+          <FaXmark size={22} />
         </button>
 
-        <div>
-          <img src={Logo} className="w-37.5 mt-8" alt="Logo" />
-          <h2 className="text-2xl font-semibold mt-2">Regístrate</h2>
-          <p className="text-sm text-gray-400 mt-1">Crea una cuenta para acceder a todas las funciones</p>
+        {/* COLUMNA IZQUIERDA: DISEÑO VISUAL */}
+        <div className="hidden md:flex md:w-1/2 relative bg-linear-to-tr from-[#101316] via-[#1a1f24] to-[#E96324]/20 p-10 flex-col justify-end overflow-hidden">
+        <img src="https://images.unsplash.com/photo-1736143157411-0a70fe999ecb?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D" alt="" className='absolute object-cover w-full h-full bottom-0 left-0 z-10 blur-[2px]'/>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_70%,rgba(233,99,36,0.15))] z-20"></div>
+          <div className="relative z-30">
+            <h2 className="text-3xl font-playfair font-bold text-white leading-snug">
+              Artesanía la sorpresa
+            </h2>
+            <p className="text-base text-white mt-2">
+              Llevamos la cultura nica al mundo digital. Crea tu cuenta y accede a todas las funciones.
+            </p>
+          </div>
         </div>
 
-        {/* Mensaje de error si falla la validación o petición */}
-        {error && (
-          <div className="bg-red-500/20 border border-red-500 text-red-300 px-4 py-2 rounded-lg mt-4 text-sm">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="mt-4 border-t border-[#323333] pt-5 flex flex-col justify-between gap-4">
-          <div className="flex flex-col gap-1">
-            <label className="text-sm">Nombre</label>
-            <input 
-              type="text" 
-              name="nombre"
-              value={formData.nombre}
-              onChange={handleChange}
-              placeholder="Tu nombre" 
-              className="p-3 px-5 rounded-lg bg-[#101316] text-white border border-[#323333] outline-none focus:border-[#646D61]"
-              required
-            />
-            
-            <label className="text-sm mt-1">Email</label>
-            <input 
-              type="email" 
-              name="correo"
-              value={formData.correo}
-              onChange={handleChange}
-              placeholder="Tu correo electrónico aquí" 
-              className="p-3 px-5 rounded-lg bg-[#101316] text-white border border-[#323333] outline-none focus:border-[#646D61]"
-              required
-            />
-            
-            <label className="text-sm mt-1">Contraseña</label>
-            <input 
-              type="password" 
-              name="contraseña"
-              value={formData.contraseña}
-              onChange={handleChange}
-              placeholder="Tu contraseña aquí" 
-              className="p-3 px-5 rounded-lg bg-[#101316] text-white border border-[#323333] outline-none focus:border-[#646D61]"
-              required
-            />
-            
-            <label className="text-sm mt-1">Confirmar contraseña</label>
-            <input 
-              type="password" 
-              name="confirmarContraseña"
-              value={formData.confirmarContraseña}
-              onChange={handleChange}
-              placeholder="Repite tu contraseña" 
-              className="p-3 px-5 rounded-lg bg-[#101316] text-white border border-[#323333] outline-none focus:border-[#646D61]"
-              required
-            />
+        {/* COLUMNA DERECHA: FORMULARIO */}
+        <div className="w-full md:w-1/2 p-8 sm:p-10 flex flex-col justify-center max-h-[90vh] overflow-y-auto no-scrollbar">
+          <div>
+            <img src={Logo} className="w-40 mb-4" alt="Logo" />
+            <h2 className="text-2xl font-bold font-playfair text-white">Regístrate</h2>
+            <p className="text-base text-gray-400 mt-1">Crea una cuenta para acceder a todas las funciones</p>
           </div>
 
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="w-full py-3.5 px-1.5 rounded-xl bg-[#E96324] hover:bg-[#9e2611] text-white font-medium transition-colors cursor-pointer mt-2 disabled:opacity-50"
-          >
-            {loading ? 'Registrando...' : 'Registrarse'}
-          </button>
-        </form>
+          {error && (
+            <div className="bg-red-500/20 border border-red-500 text-red-300 px-4 py-2 rounded-lg mt-4 text-xs">
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-3.5">
+            <div className="flex flex-col gap-1">
+              <label className="text-sm text-gray-300 font-medium">Nombre</label>
+              <input 
+                type="text" 
+                name="nombre"
+                value={formData.nombre}
+                onChange={handleChange}
+                placeholder="Tu nombre" 
+                className="p-3 rounded-xl bg-[#101316] text-white text-sm border border-[#323333] outline-none focus:border-[#E96324] transition-colors"
+                required
+              />
+            </div>
+            
+            <div className="flex flex-col gap-1">
+              <label className="text-sm text-gray-300 font-medium">Email</label>
+              <input 
+                type="email" 
+                name="correo"
+                value={formData.correo}
+                onChange={handleChange}
+                placeholder="Ej. david385@gmail.com" 
+                className="p-3 rounded-xl bg-[#101316] text-white text-sm border border-[#323333] outline-none focus:border-[#E96324] transition-colors"
+                required
+              />
+            </div>
+            
+            <div className="flex flex-col gap-1">
+              <label className="text-sm text-gray-300 font-medium">Contraseña</label>
+              <input 
+                type="password" 
+                name="contraseña"
+                value={formData.contraseña}
+                onChange={handleChange}
+                placeholder="Tu contraseña aquí" 
+                className="p-3 rounded-xl bg-[#101316] text-white text-sm border border-[#323333] outline-none focus:border-[#E96324] transition-colors"
+                required
+              />
+            </div>
+            
+            <div className="flex flex-col gap-1">
+              <label className="text-sm text-gray-300 font-medium">Confirmar contraseña</label>
+              <input 
+                type="password" 
+                name="confirmarContraseña"
+                value={formData.confirmarContraseña}
+                onChange={handleChange}
+                placeholder="Repite tu contraseña" 
+                className="p-3 rounded-xl bg-[#101316] text-white text-sm border border-[#323333] outline-none focus:border-[#E96324] transition-colors"
+                required
+              />
+            </div>
+
+            <button 
+              type="submit" 
+              disabled={loading}
+              className="w-full py-3.5 rounded-xl bg-[#E96324] hover:bg-[#c84f1a] text-white font-bold text-base transition-colors cursor-pointer mt-2 disabled:opacity-50 shadow-lg shadow-[#E96324]/20"
+            >
+              {loading ? 'Registrando...' : 'Registrarse'}
+            </button>
+          </form>
+        </div>
+
       </div>
     </div>
   );
